@@ -1,0 +1,24 @@
+.ship-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.ship {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    cursor:pointer;
+}
+
+.ship.vertical {
+    flex-direction: column;
+}
+
+.mast {
+    width: 20px;
+    height: 20px;
+    background-color: lightgray;
+    border: 1px solid black;
+    
+}
