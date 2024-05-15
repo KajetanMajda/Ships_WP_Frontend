@@ -6,6 +6,14 @@ interface ShipProps {
     size: number;
 }
 
+type ShipsState = {
+    [key: string]: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+};
+
 const Ship: React.FC<ShipProps> = ({ size }) => {
     const [isVertical, setIsVertical] = useState(false);
 
@@ -33,11 +41,20 @@ const Ship: React.FC<ShipProps> = ({ size }) => {
 };
 
 export default function ShipsDeploying() {
+    const [ships, setShips] = useState<ShipsState>({
+        4: 1,
+        3: 2,
+        2: 3,
+        1: 4
+    });
+
     const handleDrop = (event: React.DragEvent) => {
         event.preventDefault();
         const shipSize = event.dataTransfer.getData('shipSize');
-        const shipOrientation = event.dataTransfer.getData('shipOrientation');
-        console.log(`Dropped ship of size ${shipSize} with orientation ${shipOrientation}`);
+        setShips(prevShips => ({
+            ...prevShips,
+            [shipSize]: prevShips[shipSize] - 1
+        }));
     };
 
     const handleDragOver = (event: React.DragEvent) => {
@@ -47,18 +64,12 @@ export default function ShipsDeploying() {
     return (
         <div className="shipsDeploying-main-container" onDrop={handleDrop} onDragOver={handleDragOver}>    
             <div className="ships">
-                <h2>Statki</h2>
+                <h2>Dostępne statki</h2>
                 <div className="ship-row">
-                    <Ship size={4} />
-                    <Ship size={3} />
-                    <Ship size={3} />
-                    <Ship size={2} />
-                    <Ship size={2} />
-                    <Ship size={2} />
-                    <Ship size={1} />
-                    <Ship size={1} />
-                    <Ship size={1} />
-                    <Ship size={1} />
+                    {Array(ships[4]).fill(<Ship size={4} />)}
+                    {Array(ships[3]).fill(<Ship size={3} />)}
+                    {Array(ships[2]).fill(<Ship size={2} />)}
+                    {Array(ships[1]).fill(<Ship size={1} />)}
                 </div>
             </div>
         </div>

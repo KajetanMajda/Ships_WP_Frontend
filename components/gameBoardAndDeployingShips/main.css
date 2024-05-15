@@ -1,0 +1,72 @@
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    background-color: white;
+}
+
+/* .cell:hover {
+    background-color: lightblue;
+    cursor: pointer;
+} */
+
+.label {
+    width: 22px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.labels {
+    display: flex;
+}
+
+.gameBoard-main-container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+.ship-cell{
+    background-color: green;
+    border: 1px solid green;
+    /* cursor: pointer; */
+}
+
+
+
+
+
+.ship-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.ship {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    cursor:pointer;
+}
+
+.ship.vertical {
+    flex-direction: column;
+}
+
+.mast {
+    width: 20px;
+    height: 20px;
+    background-color: lightgray;
+    border: 1px solid black;
+    
+}
