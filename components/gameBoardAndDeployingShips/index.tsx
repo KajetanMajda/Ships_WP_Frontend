@@ -293,16 +293,19 @@ export default function GameBoardAndDeployingShips() {
             </div>
             <h2>Wybierz przeciwnika</h2>
             <div className="opponent-main-container">
-                
+
                 <Link href="/fight/player-vs-bot">
                     <button onClick={startGameBot}>Bot</button>
                 </Link>
+
+                <button>Oczekuj na wyzwanie</button>
                 <ul className="online-player">
                     <li><button>P1</button></li>
                     <li><button>P2</button></li>
                     <li><button>P3</button></li>
                     <li><button>P4</button></li>
                 </ul>
+
             </div>
 
         </div>
