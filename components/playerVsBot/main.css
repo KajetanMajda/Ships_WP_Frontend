@@ -1,0 +1,39 @@
+.row {
+    display: flex;
+}
+
+.label {
+    width: 22px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.labels {
+    display: flex;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    background-color: white;
+}
+
+.player-cell:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
+
+.playerVsBot-main-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+

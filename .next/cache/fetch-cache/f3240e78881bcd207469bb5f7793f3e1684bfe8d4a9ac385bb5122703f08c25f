@@ -1,0 +1,1 @@
+{"kind":"FETCH","data":{"headers":{"content-length":"90","content-type":"application/json","date":"Thu, 16 May 2024 11:30:41 GMT","vary":"Origin"},"body":"eyJnYW1lX3N0YXR1cyI6IiIsIm5pY2siOiIiLCJvcHBfc2hvdHMiOm51bGwsIm9wcG9uZW50IjoiIiwic2hvdWxkX2ZpcmUiOmZhbHNlLCJ0aW1lciI6MH0K","status":200,"url":"http://localhost:8080/api/gameData"},"revalidate":31536000,"tags":[]}
