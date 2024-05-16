@@ -39,5 +39,17 @@
     align-items: center;
 }
 
+.ship-cell {
+    background-color: lightseagreen; /* Zielony kolor dla statków */
+}
+
+
+.hit-cell {
+    background-color: #FF0000; /* Czerwony kolor dla trafień */
+}
+
+.miss-cell {
+    background-color: #808080; /* Szary kolor dla pudł */
+}
 
 

@@ -12,12 +12,6 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/opponent/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/opponent/page.css",
-      "static/chunks/app/opponent/page.js"
-    ],
     "/fight/player-vs-bot/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
