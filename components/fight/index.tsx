@@ -34,16 +34,8 @@ export default function PlayerVsBot() {
     useEffect(() => {
 
         if (gameStatus === "abandoned") {
-            if(shouldFire === true) {
-                alert("Przeciwnik zrezygnował z gry. Wygrywasz!");
+                alert("Rezygnacja z gry. Powrót do lobby.");
                 return push('/');
-            }
-            else {
-                alert("Nie oddałeś strzału w odpowiednim czasie! Gra została przerwana. Przegrana!");
-                return push('/');
-        }
-
-            
         }
 
         if (gameStatus === "ended") {

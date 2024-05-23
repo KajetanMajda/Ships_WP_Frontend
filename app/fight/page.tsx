@@ -1,12 +1,12 @@
 'use client'
 import React from 'react';
-import PlayerVsBot from "@/components/playerVsBot";
+import Gameplay from "@/components/fight";
 import './main.css'
 
-export default function GameplayerVsbot() {
+export default function GameplayByPlayer() {
     return (
         <div className='playerVsBot-main-main-container'>
-            <PlayerVsBot />
+            <Gameplay />
         </div>
     );
 }
