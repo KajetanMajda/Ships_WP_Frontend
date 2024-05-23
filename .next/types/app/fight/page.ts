@@ -1,8 +1,8 @@
-// File: /Users/kajetan/Documents/Tajne rzczy Kajetana/WP/project_ships_wp/Ships_WP_Frontend/app/fight/player-vs-bot/page.tsx
-import * as entry from '../../../../../app/fight/player-vs-bot/page.js'
+// File: /Users/kajetan/Documents/Tajne rzczy Kajetana/WP/project_ships_wp/Ships_WP_Frontend/app/fight/page.tsx
+import * as entry from '../../../../app/fight/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../../../app/fight/player-vs-bot/page.js')
+type TEntry = typeof import('../../../../app/fight/page.js')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{

@@ -12,11 +12,11 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/fight/player-vs-bot/page": [
+    "/fight/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/fight/player-vs-bot/page.css",
-      "static/chunks/app/fight/player-vs-bot/page.js"
+      "static/css/app/fight/page.css",
+      "static/chunks/app/fight/page.js"
     ]
   }
 }

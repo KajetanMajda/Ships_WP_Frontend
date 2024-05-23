@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import './main.css'
 
 interface ShipProps {
@@ -37,6 +37,7 @@ const Ship: React.FC<ShipProps> = ({ id, size }) => {
 };
 
 export default function GameBoardAndDeployingShips() {
+    const router = useRouter(); // Use useRouter for navigation
     const boardSize = 10;
     const columnLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const initialShips = [
@@ -57,13 +58,15 @@ export default function GameBoardAndDeployingShips() {
     const [availableShips, setAvailableShips] = useState(initialShips);
     const [shipPositions, setShipPositions] = useState<string[]>([]);
 
+    const [nick, setNick] = useState('Kapitan_Neptun_IX');  // Default value for nick
+    const [description, setDescription] = useState('Kapitan Neptun IX, legendarny władca mórz i pan podwodnych tajemnic, steruje swoim statkiem z nieugiętą precyzją i nieprzewidywalną strategią, siejąc strach w sercach swoich przeciwników.');  // Default value for description
+
     const handleDrop = (event: React.DragEvent, rowIndex: number, columnIndex: number) => {
         event.preventDefault();
         const shipId = event.dataTransfer.getData('shipId');
         const shipSize = parseInt(event.dataTransfer.getData('shipSize'));
         const shipOrientation = event.dataTransfer.getData('shipOrientation');
 
-        // Sprawdzenie, czy na planszy nie ma statków w obszarze wokół miejsca, gdzie chcemy postawić statek
         const canPlaceShip = canPlaceShipAt(board, rowIndex, columnIndex, shipSize, shipOrientation);
 
         if (canPlaceShip) {
@@ -78,25 +81,19 @@ export default function GameBoardAndDeployingShips() {
             setBoard(newBoard);
             setAvailableShips(availableShips.filter(ship => ship.id !== shipId));
         } else {
-            // Jeśli nie można postawić statku na wybranym miejscu, możesz obsłużyć to w jakiś sposób, np. wyświetlając komunikat
-            alert("Statki nie mogą sie stykać! Spróbuj ponownie.");
+            alert("Statki nie mogą się stykać! Spróbuj ponownie.");
         }
     };
 
     const canPlaceShipAt = (newBoard: string[][], rowIndex: number, columnIndex: number, shipSize: number, shipOrientation: string): boolean => {
-        //const newBoard = [...board];
-
         for (let i = 0; i < shipSize; i++) {
             if (shipOrientation === 'horizontal') {
-                // Sprawdzenie, czy pole nie wychodzi poza planszę
                 if (columnIndex + i >= boardSize) {
                     return false;
                 }
-                // Sprawdzenie, czy pole nie jest zajęte przez inny statek
                 if (newBoard[rowIndex][columnIndex + i] === 'ship') {
                     return false;
                 }
-                // Sprawdzenie obszaru wokół pola
                 for (let j = -1; j <= 1; j++) {
                     for (let k = -1; k <= 1; k++) {
                         if (
@@ -134,7 +131,6 @@ export default function GameBoardAndDeployingShips() {
         }
         return true;
     };
-
 
     const handleDragOver = (event: React.DragEvent) => {
         event.preventDefault();
@@ -174,17 +170,14 @@ export default function GameBoardAndDeployingShips() {
         setAvailableShips([]);
     };
 
-    const [nick, setNick] = useState('');
-    const [description, setDescription] = useState('');
     const startGameBot = () => {
-
         if (nick === '') {
-            alert("Nick nie moze byc pusty! Uzupełnij go.");
+            alert("Nick nie może być pusty! Uzupełnij go.");
             return;
         }
 
         if (description === '') {
-            alert("Opis nie moze byc pusty! Uzupełnij go.");
+            alert("Opis nie może być pusty! Uzupełnij go.");
             return;
         }
 
@@ -199,9 +192,6 @@ export default function GameBoardAndDeployingShips() {
             }
             setShipPositions(positions);
 
-            let wpbot = true;
-            let targetNick = "";
-
             const dataToSend = {
                 coords: positions.sort(),
                 nick: nick.replace(/\s/g, ''),
@@ -210,8 +200,6 @@ export default function GameBoardAndDeployingShips() {
                 targetNick: "",
             };
 
-
-            // Kod używający `document` tutaj
             fetch('http://localhost:8080/api/data', {
                 method: 'POST',
                 headers: {
@@ -222,18 +210,71 @@ export default function GameBoardAndDeployingShips() {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
+                    
                 })
                 .catch((error) => {
-
+                    console.error('Error:', error);
                 });
 
-            console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + wpbot + "\nTargetNick: " + targetNick);
+            console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + true + "\nTargetNick: ");
+            router.push('/fight');  // Navigate to /fight/player-vs-bot
         } else {
             alert("Ustaw wszystkie statki na planszy!");
         }
     };
 
+    const waitingForOpponent = () => {
+        if (nick === '') {
+            alert("Nick nie może być pusty! Uzupełnij go.");
+            return;
+        }
 
+        if (description === '') {
+            alert("Opis nie może być pusty! Uzupełnij go.");
+            return;
+        }
+
+        if (availableShips.length === 0) {
+            const positions: string[] = [];
+            for (let i = 0; i < boardSize; i++) {
+                for (let j = 0; j < boardSize; j++) {
+                    if (board[i][j] === 'ship') {
+                        positions.push(`${columnLabels[j]}${i + 1}`);
+                    }
+                }
+            }
+            setShipPositions(positions);
+
+            const dataToSend = {
+                coords: positions.sort(),
+                nick: nick.replace(/\s/g, ''),
+                desc: description,
+                wpbot: false,
+                targetNick: "",
+            };
+
+            fetch('http://localhost:8080/api/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+            console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + true + "\nTargetNick: ");
+            router.push('/fight');  // Navigate to /fight/player-vs-bot
+        } else {
+            alert("Ustaw wszystkie statki na planszy!");
+        }
+    };
 
     return (
         <div className="gameBoard-main-container">
@@ -247,7 +288,6 @@ export default function GameBoardAndDeployingShips() {
                     <textarea id="description" value={description} onChange={e => setDescription(e.target.value)}></textarea>
                 </div>
             </div>
-
 
             <div className="labels">
                 <div className="label"></div>
@@ -287,27 +327,19 @@ export default function GameBoardAndDeployingShips() {
                 <div className="random-button-container">
                     <button onClick={randomBoard}>Losuj ustawienie</button>
                 </div>
-                <div className="startGame-button-container">
-
-                </div>
+                
             </div>
             <h2>Wybierz przeciwnika</h2>
             <div className="opponent-main-container">
-
-                <Link href="/fight/player-vs-bot">
-                    <button onClick={startGameBot}>Bot</button>
-                </Link>
-
-                <button>Oczekuj na wyzwanie</button>
+            <button onClick={startGameBot}>Bot</button>
+                <button onClick={waitingForOpponent}>Oczekuj na wyzwanie</button>
                 <ul className="online-player">
                     <li><button>P1</button></li>
                     <li><button>P2</button></li>
                     <li><button>P3</button></li>
                     <li><button>P4</button></li>
                 </ul>
-
             </div>
-
         </div>
     );
 }

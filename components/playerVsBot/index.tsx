@@ -1,13 +1,17 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import './main.css'
+import { useRouter } from 'next/navigation';
+import './main.css';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface NickProps {
     nick: string;
+    desc: string;
 }
 
 interface OpponentProps {
     opponent: string;
+    descOpp: string;
 }
 
 type BoardType = (string | null)[][];
@@ -19,10 +23,45 @@ export default function PlayerVsBot() {
     const [oppShots, setOppShots] = useState<string[]>([]);
     const [shouldFire, setShouldFire] = useState(false);
     const [timer, setTimer] = useState(0);
-    const [playerBoard, setPlayerBoard] = useState<string[]>([]); // State for player's board
-    const [botBoard, setBotBoard] = useState<BoardType>(Array(10).fill(null).map(() => Array(10).fill(null))); // State for bot's board
+    const [playerBoard, setPlayerBoard] = useState<string[]>([]);
+    const [botBoard, setBotBoard] = useState<BoardType>(Array(10).fill(null).map(() => Array(10).fill(null)));
+    const [desc, setDesc] = useState("");
+    const [descOpp, setDescOpp] = useState("");
+    const { push } = useRouter();
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+
+        if (gameStatus === "abandoned") {
+            if(shouldFire === true) {
+                alert("Przeciwnik zrezygnował z gry. Wygrywasz!");
+                return push('/');
+            }
+            else {
+                alert("Nie oddałeś strzału w odpowiednim czasie! Gra została przerwana. Przegrana!");
+                return push('/');
+        }
+
+            
+        }
+
+        if (gameStatus === "ended") {
+            if (playerBoard.length === 0) {
+                alert("Koniec gry! Wygrałeś!");
+                return push('/');
+            }
+            alert("Nie udało się zatopić wrogich statków. Idziesz na dno z honorem... Przegrana!");
+            return push('/');
+
+        }
+
+        if (gameStatus == "game_in_progress") {
+            setLoading(false);
+        }
+
+
+
         const interval = setInterval(() => {
             fetch('http://localhost:8080/api/gameData')
                 .then(response => response.json())
@@ -30,7 +69,7 @@ export default function PlayerVsBot() {
                     setGameStatus(data.game_status);
                     setNick(data.nick);
                     setOpponent(data.opponent);
-                    setOppShots(data.opp_shots || []); // Ensure oppShots is an array
+                    setOppShots(data.opp_shots || []);
                     setShouldFire(data.should_fire);
                     setTimer(data.timer);
                     console.log(data);
@@ -38,26 +77,36 @@ export default function PlayerVsBot() {
                 .catch(error => console.error('Error:', error));
         }, 1000);
 
-        // Fetch player's board data every 2 seconds until it's not empty
         const boardInterval = setInterval(() => {
             fetch('http://localhost:8080/api/boardData')
                 .then(response => response.json())
                 .then(data => {
                     if (data.board && data.board.length > 0) {
                         setPlayerBoard(data.board);
-                        clearInterval(boardInterval); // Stop the interval when data is received
+                        clearInterval(boardInterval);
                         console.log(data);
                     }
                 })
                 .catch(error => console.error('Error:', error));
         }, 1000);
 
-        // Clean up function
+        const descInterval = setInterval(() => {
+            fetch('http://localhost:8080/api/descData')
+                .then(response => response.json())
+                .then(data => {
+                    setDesc(data.desc);
+                    setDescOpp(data.opp_desc);
+                    console.log(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }, 1000);
+
         return () => {
             clearInterval(interval);
             clearInterval(boardInterval);
+            clearInterval(descInterval);
         };
-    }, []);
+    }, [gameStatus]);
 
     const handleFire = async (coord: string) => {
         console.log(`Clicked on ${coord}`);
@@ -90,7 +139,7 @@ export default function PlayerVsBot() {
                     newBoard[row][col] = 'M';
                     return newBoard;
                 });
-                setShouldFire(false); // It's the opponent's turn now
+                setShouldFire(false);
             } else if (data.result === 'sunk') {
                 setBotBoard(prevBoard => {
                     const newBoard = [...prevBoard];
@@ -107,8 +156,8 @@ export default function PlayerVsBot() {
 
     const markSunkShip = (board: BoardType, row: number, col: number) => {
         const directions: [number, number][] = [
-            [0, 1], [1, 0], [0, -1], [-1, 0], // right, down, left, up
-            [1, 1], [1, -1], [-1, 1], [-1, -1] // diagonals
+            [0, 1], [1, 0], [0, -1], [-1, 0],
+            [1, 1], [1, -1], [-1, 1], [-1, -1]
         ];
 
         const isValidCell = (r: number, c: number) => r >= 0 && r < board.length && c >= 0 && c < board[0].length;
@@ -146,7 +195,7 @@ export default function PlayerVsBot() {
                         const newRow = i + dx;
                         const newCol = j + dy;
                         if (isValidCell(newRow, newCol) && !board[newRow][newCol]) {
-                            board[newRow][newCol] = 'M'; // Mark as miss
+                            board[newRow][newCol] = 'M';
                         }
                     });
                 }
@@ -174,12 +223,18 @@ export default function PlayerVsBot() {
 
     return (
         <div className='playerVsBot-main-container'>
+            {loading && <LoadingSpinner />}
+            <div className="abonded-button-container">
+                <button className="TEST">Poddaj się</button>
+            </div>
+            
             <div className='timer-container'>
                 <h1 className={getTimerClass(timer)}>{formatTime(timer)}</h1>
             </div>
             <div className='boards-container'>
-                <BotBoard opponent={opponent} onFire={handleFire} shouldFire={shouldFire} botBoard={botBoard} />
-                <PlayerBoard nick={nick} playerBoard={playerBoard} oppShots={oppShots} shouldFire={shouldFire} />
+                <PlayerBoard nick={nick} desc={desc} playerBoard={playerBoard} oppShots={oppShots} shouldFire={shouldFire} />
+                <div className={shouldFire ? 'triangle-right' : 'triangle-left'}></div>
+                <BotBoard opponent={opponent} descOpp={descOpp} onFire={handleFire} shouldFire={shouldFire} botBoard={botBoard} />
             </div>
         </div>
     );
@@ -191,32 +246,30 @@ interface PlayerBoardProps extends NickProps {
     shouldFire: boolean;
 }
 
-const PlayerBoard = ({ nick, playerBoard, oppShots, shouldFire }: PlayerBoardProps) => {
+const PlayerBoard = ({ nick, desc, playerBoard, oppShots, shouldFire }: PlayerBoardProps) => {
     const boardSize = 10;
     const board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
     const columnLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
-    // Convert coordinates to board indices if playerBoard is not null or undefined
     if (playerBoard) {
         playerBoard.forEach(coord => {
             const col = coord.charCodeAt(0) - 'A'.charCodeAt(0);
             const row = parseInt(coord.substring(1), 10) - 1;
             if (col >= 0 && col < boardSize && row >= 0 && row < boardSize) {
-                board[row][col] = 'S'; // 'S' for Ship
+                board[row][col] = 'S';
             }
         });
     }
 
-    // Mark opponent shots on the board if oppShots is not null or undefined
     if (oppShots) {
         oppShots.forEach(coord => {
             const col = coord.charCodeAt(0) - 'A'.charCodeAt(0);
             const row = parseInt(coord.substring(1), 10) - 1;
             if (col >= 0 && col < boardSize && row >= 0 && row < boardSize) {
                 if (board[row][col] === 'S') {
-                    board[row][col] = 'H'; // 'H' for Hit
+                    board[row][col] = 'H';
                 } else {
-                    board[row][col] = 'M'; // 'M' for Miss
+                    board[row][col] = 'M';
                 }
             }
         });
@@ -243,6 +296,7 @@ const PlayerBoard = ({ nick, playerBoard, oppShots, shouldFire }: PlayerBoardPro
             ))}
 
             <h3>Mapa gracza: {nick}</h3>
+            <h5 className='desc'>{desc}</h5>
         </div>
     );
 }
@@ -253,7 +307,7 @@ interface BotBoardProps extends OpponentProps {
     botBoard: BoardType;
 }
 
-const BotBoard = ({ opponent, onFire, shouldFire, botBoard }: BotBoardProps) => {
+const BotBoard = ({ opponent, descOpp, onFire, shouldFire, botBoard }: BotBoardProps) => {
     const boardSize = 10;
     const columnLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
@@ -261,7 +315,6 @@ const BotBoard = ({ opponent, onFire, shouldFire, botBoard }: BotBoardProps) => 
         const rowLabel = rowIndex + 1;
         const columnLabel = columnLabels[columnIndex];
         const coord = `${columnLabel}${rowLabel}`;
-        // console.log(coord);
         onFire(coord);
     }
 
@@ -286,6 +339,7 @@ const BotBoard = ({ opponent, onFire, shouldFire, botBoard }: BotBoardProps) => 
                 </div>
             ))}
             <h3>Mapa gracza: {opponent}</h3>
+            <h5 className='desc'>{descOpp}</h5>
         </div>
     );
 }
