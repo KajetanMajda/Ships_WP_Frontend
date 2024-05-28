@@ -11,7 +11,7 @@ const LoadingSpinner = () => {
 
     return (
         <div className="loading-spinner">
-            <button onClick ={handleBackToMenu} className="normal-game">Wroc do Menu</button>
+            {/* <button onClick ={handleBackToMenu} className="normal-game">Wroc do Menu</button> */}
             <div className="spinner"></div>
             <p>Ładowanie...</p>
         </div>

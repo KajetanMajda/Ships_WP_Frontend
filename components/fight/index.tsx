@@ -16,6 +16,8 @@ interface OpponentProps {
 
 type BoardType = (string | null)[][];
 
+type Coord = string;
+
 export default function PlayerVsBot() {
     const [gameStatus, setGameStatus] = useState("");
     const [nick, setNick] = useState("");
@@ -30,22 +32,38 @@ export default function PlayerVsBot() {
     const { push } = useRouter();
 
     const [loading, setLoading] = useState(true);
+    const [missShots, setMissShots] = useState<Coord[]>([]);
+    const [hitShots, setHitShots] = useState<Coord[]>([]);
+
+    const addMissShot = (shot: Coord) => {
+        setMissShots(prevShots => [...prevShots, shot]);
+    };
+
+    const addHitShot = (shot: Coord) => {
+        setHitShots(prevShots => [...prevShots, shot]);
+    };
+
+    const shotsFired = missShots.length + hitShots.length;
+    const accuracy = Math.round((hitShots.length / shotsFired) * 100);
+
+
 
     useEffect(() => {
 
         if (gameStatus === "abandoned") {
-                alert("Rezygnacja z gry. Powrót do lobby.");
-                return push('/');
+            alert("Rezygnacja z gry. Powrót do lobby.");
+            return push('/');
         }
 
         if (gameStatus === "ended") {
             if (playerBoard.length === 0) {
-                alert("Koniec gry! Wygrałeś!");
+                alert(`Zatopiłeś wszystkie statki! Wracasz do domu! Wygrałeś!\n Strzały oddane: ${shotsFired}\nPudła: ${missShots.length}\nCelność: ${accuracy} %\nPowrót do lobby.`)
                 return push('/');
             }
-            alert("Nie udało się zatopić wrogich statków. Idziesz na dno z honorem... Przegrana!");
-            return push('/');
-
+            else {
+                alert(`Nie udało się zatopić wrogich statków. Idziesz na dno z honorem... Przegrana!\nStrzały oddane: ${shotsFired}\nPudła: ${missShots.length}\nCelność: ${accuracy} %\nPowrót do lobby.`)
+                return push('/');
+            }
         }
 
         if (gameStatus == "game_in_progress") {
@@ -101,9 +119,9 @@ export default function PlayerVsBot() {
     }, [gameStatus]);
 
     const handleFire = async (coord: string) => {
-        console.log(`Clicked on ${coord}`);
+        console.log(`Kliknąłeś na:  ${coord}`);
         if (!shouldFire) {
-            alert("It's not your turn to fire!");
+            alert("To nie jest twoja kolej!");
             return;
         }
 
@@ -120,12 +138,15 @@ export default function PlayerVsBot() {
 
             const [col, row] = [coord.charCodeAt(0) - 'A'.charCodeAt(0), parseInt(coord.substring(1)) - 1];
             if (data.result === 'hit') {
+                addHitShot(coord);
                 setBotBoard(prevBoard => {
                     const newBoard = [...prevBoard];
                     newBoard[row][col] = 'H';
                     return newBoard;
                 });
             } else if (data.result === 'miss') {
+                addMissShot(coord);
+                console.log(addMissShot);
                 setBotBoard(prevBoard => {
                     const newBoard = [...prevBoard];
                     newBoard[row][col] = 'M';
@@ -133,6 +154,7 @@ export default function PlayerVsBot() {
                 });
                 setShouldFire(false);
             } else if (data.result === 'sunk') {
+                addHitShot(coord);
                 setBotBoard(prevBoard => {
                     const newBoard = [...prevBoard];
                     newBoard[row][col] = 'S';
@@ -219,7 +241,7 @@ export default function PlayerVsBot() {
             <div className="abonded-button-container">
                 <button className="TEST">Poddaj się</button>
             </div>
-            
+
             <div className='timer-container'>
                 <h1 className={getTimerClass(timer)}>{formatTime(timer)}</h1>
             </div>
