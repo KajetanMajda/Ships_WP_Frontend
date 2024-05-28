@@ -235,11 +235,27 @@ export default function PlayerVsBot() {
         }
     }
 
+    const handleAbandonGame = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/abandon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     return (
         <div className='playerVsBot-main-container'>
             {loading && <LoadingSpinner />}
             <div className="abonded-button-container">
-                <button className="TEST">Poddaj się</button>
+                <button className="TEST" onClick={handleAbandonGame}>Poddaj się</button>
             </div>
 
             <div className='timer-container'>
