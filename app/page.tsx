@@ -1,24 +1,24 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import GameBoardAndDeployingShips from "@/components/gameBoardAndDeployingShips";
-import { BrowserRouter as Router } from 'react-router-dom';
+import './main.css';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
-  const [isBrowser, setIsBrowser] = useState(false);
+export default function App() {
+    const router = useRouter();
 
-  useEffect(() => {
-    setIsBrowser(true);
-  }, []);
+    const startGame = () => {
+        router.push('/home');
+    }
 
-  if (!isBrowser) {
-    return null; // or a loading indicator/spinner
-  }
+    const statistic = () => {
+        router.push('/statistic');
+    }
 
-  return (
-    <div>
-      <Router>
-        <GameBoardAndDeployingShips />
-      </Router>
-    </div>
-  );
+    return (
+        <div className="main-menu-container">
+            <div className="home-main-button-container">
+                <button className="normal-game" onClick={startGame}>Zaczynamy</button>
+                <button className="statistic" onClick={statistic}>Statystyki</button>
+            </div>
+        </div>
+    );
 }

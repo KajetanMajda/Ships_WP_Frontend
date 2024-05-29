@@ -1,0 +1,231 @@
+/*!********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./components/gameBoardAndDeployingShips/main.css ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************/
+body, html {
+    margin: 0;
+    background-color: #f5f5f5;
+    padding: 0;
+    height: 100%;
+    overflow: visible;
+}
+.gameBoard-main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.labels {
+    display: flex;
+    align-items: center;
+}
+
+.label {
+    width: 32px;
+    height: 30px;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    color:lightseagreen;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
+
+.row:last-child {
+    border-bottom: 2px solid black;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    border-left:0;
+    border-bottom:0;
+}
+.row .cell:nth-child(2) {
+    border-left: 2px solid black;
+}
+.row:nth-child(12) .cell {
+    border-bottom: 2px solid black;
+}
+
+
+.ship-cell {
+    background-color: lightseagreen;
+}
+
+/* Styling for the ships */
+.ships {
+    margin-top: 20px;
+}
+
+.ship-row {
+    display: flex;
+}
+
+
+.ship {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    cursor:pointer;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styling for the input fields */
+.about-main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+    
+}
+
+.your-nick,
+.your-description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input,
+textarea {
+    width: 200px;
+    height: 40px;
+    border: 1px solid lightseagreen;
+    text-align: center;
+    /* line-height: 40px; */
+}
+
+input {
+    font-size: 18px;
+}
+
+/* Styling for the buttons */
+.main-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap:20px;
+}
+
+.reset-button-container,
+.random-button-container,
+.back-to-hub-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+}
+
+button {
+    padding: 10px 20px;
+    background-color: lightseagreen;
+    color: black;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: rgb(32, 151, 145);
+}
+
+
+.ship .mast {
+    width: 30px;
+    height: 30px;
+    background-color: lightseagreen;
+    /* border-left: 1px solid red;
+    border-right: 1px solid yellow; */
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+.ship.vertical .mast{
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-top:0;
+    border-bottom:0;
+
+}
+
+.ship.vertical .mast:first-of-type{
+    border-top: 2px solid black;
+}
+
+.ship.vertical .mast:last-of-type{
+    border-bottom: 2px solid black;
+}
+
+.mast:first-of-type{
+    border-left: 2px solid black;
+}
+
+.mast:last-of-type{
+    border-right: 2px solid black;
+}
+
+
+
+.ship-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.ship {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+    cursor:pointer;
+}
+
+.ship.vertical {
+    flex-direction: column;
+}
+
+.opponent-main-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Odstęp między elementami */
+    padding: 10px;
+}
+
+.opponent-main-container a,
+.opponent-main-container button {
+    margin:0 5px;
+}
+
+.online-player {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px; /* Odstęp między przyciskami graczy */
+}
+
+.online-player li {
+    display: flex;
+
+}
+
+.online-player button {
+    margin: 0; /* Usuń margines z przycisków w liściach */
+    margin-left: 5px;
+}

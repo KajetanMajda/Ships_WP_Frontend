@@ -210,7 +210,7 @@ export default function GameBoardAndDeployingShips() {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    
+
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -263,7 +263,7 @@ export default function GameBoardAndDeployingShips() {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    
+
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -275,6 +275,9 @@ export default function GameBoardAndDeployingShips() {
             alert("Ustaw wszystkie statki na planszy!");
         }
     };
+    const backButton = () => {
+        router.push('/');
+    }
 
     return (
         <div className="gameBoard-main-container">
@@ -327,11 +330,15 @@ export default function GameBoardAndDeployingShips() {
                 <div className="random-button-container">
                     <button onClick={randomBoard}>Losuj ustawienie</button>
                 </div>
-                
+                <div className="back-to-hub-button-container">
+                    <button onClick={backButton}>Powrót</button>
+                </div>
+
+
             </div>
             <h2>Wybierz przeciwnika</h2>
             <div className="opponent-main-container">
-            <button onClick={startGameBot}>Bot</button>
+                <button onClick={startGameBot}>Bot</button>
                 <button onClick={waitingForOpponent}>Oczekuj na wyzwanie</button>
                 <ul className="online-player">
                     <li><button>P1</button></li>

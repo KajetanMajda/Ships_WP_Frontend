@@ -1,6 +1,9 @@
-/* Styling for the game board */
-body{
+body, html {
+    margin: 0;
     background-color: #f5f5f5;
+    padding: 0;
+    height: 100%;
+    overflow: visible;
 }
 .gameBoard-main-container {
     display: flex;
@@ -21,6 +24,7 @@ body{
     text-align: center;
     line-height: 30px;
     font-weight: bold;
+    color:lightseagreen;
 }
 
 .row {
@@ -28,14 +32,27 @@ body{
     align-items: center;
 }
 
+.row:last-child {
+    border-bottom: 2px solid black;
+}
+
 .cell {
     width: 30px;
     height: 30px;
-    border: 1px solid #000;
+    border: 2px solid black;
+    border-left:0;
+    border-bottom:0;
+}
+.row .cell:nth-child(2) {
+    border-left: 2px solid black;
+}
+.row:nth-child(12) .cell {
+    border-bottom: 2px solid black;
 }
 
+
 .ship-cell {
-    background-color: lightseagreen; /* Dodatkowy kolor dla komórek z statkami */
+    background-color: lightseagreen;
 }
 
 /* Styling for the ships */
@@ -53,13 +70,6 @@ body{
     flex-direction: row;
     margin-right: 10px;
     cursor:pointer;
-}
-
-.mast {
-    width: 100%;
-    height: 5px;
-    background-color: lightseagreen;
-    border: 1px solid black;
 }
 
 .vertical {
@@ -111,7 +121,8 @@ input {
 }
 
 .reset-button-container,
-.random-button-container {
+.random-button-container,
+.back-to-hub-button-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
@@ -132,18 +143,41 @@ button:hover {
 }
 
 
-
-
-
-
-
-
-
-.mast {
+.ship .mast {
     width: 30px;
     height: 30px;
-    border: 1px solid #000;
+    background-color: lightseagreen;
+    /* border-left: 1px solid red;
+    border-right: 1px solid yellow; */
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
 }
+
+.ship.vertical .mast{
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-top:0;
+    border-bottom:0;
+
+}
+
+.ship.vertical .mast:first-of-type{
+    border-top: 2px solid black;
+}
+
+.ship.vertical .mast:last-of-type{
+    border-bottom: 2px solid black;
+}
+
+.mast:first-of-type{
+    border-left: 2px solid black;
+}
+
+.mast:last-of-type{
+    border-right: 2px solid black;
+}
+
+
 
 .ship-row {
     display: flex;

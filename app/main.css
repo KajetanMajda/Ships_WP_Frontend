@@ -1,0 +1,39 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-menu-container {
+    height: 100%;
+    width: 100%;
+    background-image: url(../assets/photos/DALL·E\ PixelArt\ of\ ships.webp);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    flex-direction: row;
+}
+
+.home-main-button-container {
+    margin-top: 4%;
+}
+
+.normal-game, .statistic{
+    padding: 10px 20px;
+    background-color: lightseagreen;
+    color: black;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px;
+    width: 150px;
+    height: 60px;
+    font-size: 20px;
+}
+
+.normal-game:hover, .statistic:hover {
+    background-color: rgb(32, 151, 145);
+}

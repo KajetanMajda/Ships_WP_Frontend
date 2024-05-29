@@ -1,15 +1,24 @@
 'use client'
-import './main.css';
+import React, { useEffect, useState } from 'react';
+import GameBoardAndDeployingShips from "@/components/gameBoardAndDeployingShips";
+import { BrowserRouter as Router } from 'react-router-dom';
 
-export default function App() {
+export default function Home() {
+  const [isBrowser, setIsBrowser] = useState(false);
 
-    return (
-        <div className="main-menu-container">
-            <div className="main-button-container">
-                {/* <button className="how-to-play">Jak grać?</button> */}
-                <button className="normal-game">Zaczynamy!</button>
-                <button className="statistic">Statystyki</button>
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
+
+  if (!isBrowser) {
+    return null; // or a loading indicator/spinner
+  }
+
+  return (
+    <div>
+      <Router>
+        <GameBoardAndDeployingShips />
+      </Router>
+    </div>
+  );
 }
