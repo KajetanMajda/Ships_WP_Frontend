@@ -134,12 +134,12 @@ button {
     background-color: lightseagreen;
     color: black;
     border: none;
-    cursor: pointer;
     border-radius: 5px;
 }
 
 button:hover {
     background-color: rgb(32, 151, 145);
+    cursor: pointer;
 }
 
 
@@ -225,4 +225,9 @@ button:hover {
 .online-player button {
     margin: 0; /* Usuń margines z przycisków w liściach */
     margin-left: 5px;
+}
+
+button.no-hover:hover {
+    background-color: lightseagreen; /* Keep the original background color */
+    cursor: default; /* Optional: Change cursor to default */
 }

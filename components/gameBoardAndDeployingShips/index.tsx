@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import './main.css'
 
@@ -61,6 +61,9 @@ export default function GameBoardAndDeployingShips() {
     const [nick, setNick] = useState('Kapitan_Neptun_IX');  // Default value for nick
     const [description, setDescription] = useState('Kapitan Neptun IX, legendarny władca mórz i pan podwodnych tajemnic, steruje swoim statkiem z nieugiętą precyzją i nieprzewidywalną strategią, siejąc strach w sercach swoich przeciwników.');  // Default value for description
 
+    const [nickOpp, setNickOpp] = useState("");
+    const [gameStatusOpp, setGameStatusOpp] = useState("");
+
     const handleDrop = (event: React.DragEvent, rowIndex: number, columnIndex: number) => {
         event.preventDefault();
         const shipId = event.dataTransfer.getData('shipId');
@@ -83,6 +86,15 @@ export default function GameBoardAndDeployingShips() {
         } else {
             alert("Statki nie mogą się stykać! Spróbuj ponownie.");
         }
+    };
+    const handleDragOver = (event: React.DragEvent) => {
+        event.preventDefault();
+    };
+
+    const resetBoard = () => {
+        setBoard(emptyBoard);
+        setAvailableShips(initialShips);
+        setShipPositions([]);
     };
 
     const canPlaceShipAt = (newBoard: string[][], rowIndex: number, columnIndex: number, shipSize: number, shipOrientation: string): boolean => {
@@ -130,16 +142,6 @@ export default function GameBoardAndDeployingShips() {
             }
         }
         return true;
-    };
-
-    const handleDragOver = (event: React.DragEvent) => {
-        event.preventDefault();
-    };
-
-    const resetBoard = () => {
-        setBoard(emptyBoard);
-        setAvailableShips(initialShips);
-        setShipPositions([]);
     };
 
     const randomBoard = () => {
@@ -269,16 +271,114 @@ export default function GameBoardAndDeployingShips() {
                     console.error('Error:', error);
                 });
 
-            console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + true + "\nTargetNick: ");
-            router.push('/fight');  // Navigate to /fight/player-vs-bot
+            console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + false + "\nTargetNick: ");
+            router.push('/fight');  // Navigate to /fight
         } else {
             alert("Ustaw wszystkie statki na planszy!");
         }
     };
+
     const backButton = () => {
         router.push('/');
     }
 
+
+    const Lobby = () => {
+        const [gameStatusOpp, setGameStatusOpp] = useState('');
+        const [nickOpp, setNickOpp] = useState('');
+        const [playersAvailable, setPlayersAvailable] = useState(false);
+    
+        useEffect(() => {
+            const interval = setInterval(() => {
+                fetch('http://localhost:8080/api/lobby')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length > 0) {
+                            setGameStatusOpp(data[0].game_status);
+                            setNickOpp(data[0].nick);
+                            setPlayersAvailable(true);
+                        } else {
+                            setPlayersAvailable(false);
+                        }
+                        console.log(data);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }, 1000);
+    
+            return () => {
+                clearInterval(interval);
+            };
+        }, []);
+
+        const fightWithOpponent = () => {
+            if (nick === '') {
+                alert("Nick nie może być pusty! Uzupełnij go.");
+                return;
+            }
+    
+            if (description === '') {
+                alert("Opis nie może być pusty! Uzupełnij go.");
+                return;
+            }
+    
+            if (availableShips.length === 0) {
+                const positions: string[] = [];
+                for (let i = 0; i < boardSize; i++) {
+                    for (let j = 0; j < boardSize; j++) {
+                        if (board[i][j] === 'ship') {
+                            positions.push(`${columnLabels[j]}${i + 1}`);
+                        }
+                    }
+                }
+                setShipPositions(positions);
+    
+                const dataToSend = {
+                    coords: positions.sort(),
+                    nick: nick.replace(/\s/g, ''),
+                    desc: description,
+                    wpbot: false,
+                    targetNick: nickOpp,
+                };
+    
+                fetch('http://localhost:8080/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+    
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+    
+                console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + false + "\nTargetNick:  " + nickOpp);
+                router.push('/fight');  // Navigate to /fight
+            } else {
+                alert("Ustaw wszystkie statki na planszy!");
+            }
+        };
+    
+        return (
+            <div>
+                {playersAvailable ? (
+                    <li><button onClick={fightWithOpponent}>{nickOpp}</button></li>
+                ) : (
+                    <li><button className="no-hover">Brak dostępnych graczy!</button></li>
+                )}
+            </div>
+        );
+    };
+    
     return (
         <div className="gameBoard-main-container">
             <div className="about-main-container">
@@ -341,10 +441,7 @@ export default function GameBoardAndDeployingShips() {
                 <button onClick={startGameBot}>Bot</button>
                 <button onClick={waitingForOpponent}>Oczekuj na wyzwanie</button>
                 <ul className="online-player">
-                    <li><button>P1</button></li>
-                    <li><button>P2</button></li>
-                    <li><button>P3</button></li>
-                    <li><button>P4</button></li>
+                    <Lobby />
                 </ul>
             </div>
         </div>
