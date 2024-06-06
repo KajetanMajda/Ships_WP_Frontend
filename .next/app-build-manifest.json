@@ -12,12 +12,6 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/statistic/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/statistic/page.css",
-      "static/chunks/app/statistic/page.js"
-    ],
     "/home/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -29,6 +23,12 @@
       "static/chunks/main-app.js",
       "static/css/app/fight/page.css",
       "static/chunks/app/fight/page.js"
+    ],
+    "/statistic/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/statistic/page.css",
+      "static/chunks/app/statistic/page.js"
     ]
   }
 }

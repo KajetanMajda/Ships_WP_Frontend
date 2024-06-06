@@ -234,3 +234,10 @@ button.no-hover:hover {
     background-color: lightseagreen; /* Keep the original background color */
     cursor: default; /* Optional: Change cursor to default */
 }
+.li-fight-with-opponent{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}

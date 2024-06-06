@@ -60,8 +60,8 @@ export default function PlayerVsBot() {
                 alert(`Zatopiłeś wszystkie statki! Wracasz do domu! Wygrałeś!\n Strzały oddane: ${shotsFired}\nPudła: ${missShots.length}\nCelność: ${accuracy} %\nPowrót do lobby.`)
                 return push('/');
             }
-            else {
-                alert(`Nie udało się zatopić wrogich statków. Idziesz na dno z honorem... Przegrana!\nStrzały oddane: ${shotsFired}\nPudła: ${missShots.length}\nCelność: ${accuracy} %\nPowrót do lobby.`)
+            else { //Nie udało się zatopić wrogich statków. Idziesz na dno z honorem... Przegrana!\n
+                alert(`Strzały oddane: ${shotsFired}\nPudła: ${missShots.length}\nCelność: ${accuracy} %\nPowrót do lobby.`)
                 return push('/');
             }
         }

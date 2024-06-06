@@ -9,6 +9,12 @@ interface ShipProps {
     onShipPlaced: () => void;
 }
 
+interface Player {
+    nick: string;
+    game_status: string;
+}
+
+
 const Ship: React.FC<ShipProps> = ({ id, size }) => {
     const [isVertical, setIsVertical] = useState(false);
 
@@ -17,7 +23,7 @@ const Ship: React.FC<ShipProps> = ({ id, size }) => {
     };
 
     const handleDragStart = (event: React.DragEvent) => {
-        event.dataTransfer.setData('shipId', id); // Ustawienie id statku w danych przeciągania
+        event.dataTransfer.setData('shipId', id); 
         event.dataTransfer.setData('shipSize', size.toString());
         event.dataTransfer.setData('shipOrientation', isVertical ? 'vertical' : 'horizontal');
     };
@@ -37,7 +43,7 @@ const Ship: React.FC<ShipProps> = ({ id, size }) => {
 };
 
 export default function GameBoardAndDeployingShips() {
-    const router = useRouter(); // Use useRouter for navigation
+    const router = useRouter(); 
     const boardSize = 10;
     const columnLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const initialShips = [
@@ -58,8 +64,8 @@ export default function GameBoardAndDeployingShips() {
     const [availableShips, setAvailableShips] = useState(initialShips);
     const [shipPositions, setShipPositions] = useState<string[]>([]);
 
-    const [nick, setNick] = useState('Kapitan_Neptun_IX');  // Default value for nick
-    const [description, setDescription] = useState('Kapitan Neptun IX, legendarny władca mórz i pan podwodnych tajemnic, steruje swoim statkiem z nieugiętą precyzją i nieprzewidywalną strategią, siejąc strach w sercach swoich przeciwników.');  // Default value for description
+    const [nick, setNick] = useState('Kapitan_Neptun_IX');  
+    const [description, setDescription] = useState('Kapitan Neptun IX, legendarny władca mórz i pan podwodnych tajemnic, steruje swoim statkiem z nieugiętą precyzją i nieprzewidywalną strategią, siejąc strach w sercach swoich przeciwników.');  
 
     const [nickOpp, setNickOpp] = useState("");
     const [gameStatusOpp, setGameStatusOpp] = useState("");
@@ -219,7 +225,7 @@ export default function GameBoardAndDeployingShips() {
                 });
 
             console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + true + "\nTargetNick: ");
-            router.push('/fight');  // Navigate to /fight/player-vs-bot
+            router.push('/fight');  
         } else {
             alert("Ustaw wszystkie statki na planszy!");
         }
@@ -272,7 +278,7 @@ export default function GameBoardAndDeployingShips() {
                 });
 
             console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + false + "\nTargetNick: ");
-            router.push('/fight');  // Navigate to /fight
+            router.push('/fight'); 
         } else {
             alert("Ustaw wszystkie statki na planszy!");
         }
@@ -286,7 +292,7 @@ export default function GameBoardAndDeployingShips() {
     const Lobby = () => {
         const [gameStatusOpp, setGameStatusOpp] = useState('');
         const [nickOpp, setNickOpp] = useState('');
-        const [playersAvailable, setPlayersAvailable] = useState(false);
+        const [playersAvailable, setPlayersAvailable] = useState<Player[]>([]); // Use Player type
     
         useEffect(() => {
             const interval = setInterval(() => {
@@ -299,11 +305,9 @@ export default function GameBoardAndDeployingShips() {
                     })
                     .then(data => {
                         if (data.length > 0) {
-                            setGameStatusOpp(data[0].game_status);
-                            setNickOpp(data[0].nick);
-                            setPlayersAvailable(true);
+                            setPlayersAvailable(data);
                         } else {
-                            setPlayersAvailable(false);
+                            setPlayersAvailable([]);
                         }
                         console.log(data);
                     })
@@ -314,8 +318,8 @@ export default function GameBoardAndDeployingShips() {
                 clearInterval(interval);
             };
         }, []);
-
-        const fightWithOpponent = () => {
+    
+        const fightWithOpponent = (nickOpp: string) => {
             if (nick === '') {
                 alert("Nick nie może być pusty! Uzupełnij go.");
                 return;
@@ -327,7 +331,7 @@ export default function GameBoardAndDeployingShips() {
             }
     
             if (availableShips.length === 0) {
-                const positions: string[] = [];
+                const positions = [];
                 for (let i = 0; i < boardSize; i++) {
                     for (let j = 0; j < boardSize; j++) {
                         if (board[i][j] === 'ship') {
@@ -342,8 +346,10 @@ export default function GameBoardAndDeployingShips() {
                     nick: nick.replace(/\s/g, ''),
                     desc: description,
                     wpbot: false,
-                    targetNick: nickOpp,
+                    target_nick: nickOpp,
                 };
+    
+                console.log('Data to Send:', dataToSend);
     
                 fetch('http://localhost:8080/api/data', {
                     method: 'POST',
@@ -354,15 +360,11 @@ export default function GameBoardAndDeployingShips() {
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
-    
+                        console.log('Response Data:', data);
                     })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
+                    .catch(error => console.error('Error:', error));
     
-                console.log("Pozycje statków: " + positions.sort() + "\nNick: " + nick.replace(/\s/g, '') + "\nOpis: " + description + "\nBot: " + false + "\nTargetNick:  " + nickOpp);
-                router.push('/fight');  // Navigate to /fight
+                router.push('/fight');
             } else {
                 alert("Ustaw wszystkie statki na planszy!");
             }
@@ -370,14 +372,20 @@ export default function GameBoardAndDeployingShips() {
     
         return (
             <div>
-                {playersAvailable ? (
-                    <li><button onClick={fightWithOpponent}>{nickOpp}</button></li>
+                {playersAvailable.length > 0 ? (
+                    playersAvailable.map((player, index) => (
+                        <li key={index} className="li-fight-with-opponent">
+                            <button onClick={() => fightWithOpponent(player.nick)}>{player.nick}</button>
+                        </li>
+                    ))
                 ) : (
                     <li><button className="no-hover">Brak dostępnych graczy!</button></li>
                 )}
             </div>
         );
     };
+    
+    
     
     return (
         <div className="gameBoard-main-container">
@@ -433,8 +441,6 @@ export default function GameBoardAndDeployingShips() {
                 <div className="back-to-hub-button-container">
                     <button onClick={backButton}>Powrót</button>
                 </div>
-
-
             </div>
             <h2>Wybierz przeciwnika</h2>
             <div className="opponent-main-container">
